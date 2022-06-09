@@ -2,22 +2,46 @@ import React, {Component} from 'react'
 
 export default class Calculator extends Component {
     state = {
-        num1: '',
-        num2: '',
-        sum: 0
+        num1: 0,
+        num2: 0,
+        sum: 0,
+        operator: '+'
     }
     setNum = (e) => {
-        this.setState({ [e.target.name]: e.target.value});
+        const changedInput = {
+            [e.target.name]: Number(e.target.value)
+        }
+        this.setState(changedInput);
       }
-    handleSubmit = (e) => {
-        e.preventDefault()
-        console.log(this.state.sum)
-        this.setState({
-            num1: '',
-            num2: '',
-            sum: parseInt(this.state.num1) + parseInt(this.state.num2)
-        })
+    handleCalc = (e) => {
+       e.preventDefault()
+       this.setState(prevState => {
+           let result = 0
+           switch (this.state.operator) {
+               case '+':
+                   result = prevState.num1 + prevState.num2
+                   break
+               case '-':
+                   result = prevState.num1 - prevState.num2
+                   break
+               case '*':
+                   result = prevState.num1 * prevState.num2
+                   break
+               case '/':
+                   result = prevState.num1 / prevState.num2
+                   break
+                   default:
+                       console.warn(`${this.state.operator} is not a math function`)
+           }
+           return {sum: result}
+       })
     }
+
+    handleOperatorChange = e => {
+        console.log(e)
+        this.setState({ operator: e.target.value })
+    }
+
     render() {
         return(
             <div className="caclulator">
@@ -29,14 +53,22 @@ export default class Calculator extends Component {
                     value={this.state.num1}
                     onChange={this.setNum}
                 />
-                <span>+</span>
+                <select 
+                name='operator'
+                onChange={this.handleOperatorChange}
+                >
+                    <option value='+'>+</option>
+                    <option value='-'>-</option>
+                    <option value='*'>*</option>
+                    <option value='/'>/</option>
+                </select>
                 <input type="number" 
                     name="num2"
                     value={this.state.num2}
                     onChange={this.setNum}
                 />
                 <button 
-                    onClick={this.handleSubmit}
+                    onClick={this.handleCalc}
                     type='submit'
                 >
                     =
